@@ -1,0 +1,210 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+// --- LỚP CHA: SPELL ---
+abstract class Spell {
+    protected String name;
+    protected int power;
+
+    public Spell(String name, int power) {
+        this.name = name;
+        this.power = power;
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public void setPower(int power) {
+        this.power = power;
+    }
+
+    // Phương thức trừu tượng để lấy tên lớp (yếu tố)
+    public abstract String getElement();
+}
+
+// --- LỚP CON CÁC LOẠI BÙA CHÚ ---
+class FireSpell extends Spell {
+    public FireSpell(String name, int power) {
+        super(name, power);
+    }
+
+    @Override
+    public String getElement() {
+        return "FireSpell";
+    }
+}
+
+class WaterSpell extends Spell {
+    public WaterSpell(String name, int power) {
+        super(name, power);
+    }
+
+    @Override
+    public String getElement() {
+        return "WaterSpell";
+    }
+}
+
+// ĐÃ SỬA LỖI: Lớp EarthSpell chỉ định nghĩa 1 lần và có ghi đè getElement()
+class EarthSpell extends Spell {
+    public EarthSpell(String name, int power) {
+        super(name, power);
+    }
+
+    @Override
+    public String getElement() {
+        return "EarthSpell";
+    }
+}
+
+// --- LỚP STUDENT ---
+class Student {
+    private String name;
+    private int competitionPoints;
+    private List<Spell> spells;
+
+    public Student(String name) {
+        this.name = name;
+        this.competitionPoints = 0;
+        this.spells = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getCompetitionPoints() {
+        return competitionPoints;
+    }
+
+    public void addSpell(Spell spell) {
+        this.spells.add(spell);
+    }
+    
+    public int getNumberOfSpellsLeft() {
+        return spells.size();
+    }
+
+    /**
+     * Kiểm tra xem học sinh có bùa chú thuộc yếu tố cần thiết không.
+     */
+    public boolean hasRequiredSpell(String requiredElement) {
+        for (Spell spell : spells) {
+            if (spell.getElement().equals(requiredElement)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Xử lý thử thách: tăng điểm nếu có bùa chú, nếu không thì suy yếu bùa chú.
+     */
+    public void takeTrial(String trialElement) {
+        String requiredSpellType = trialElement + "Spell";
+
+        if (hasRequiredSpell(requiredSpellType)) {
+            // Có bùa chú tương ứng -> Cộng 1 điểm
+            this.competitionPoints++;
+        } else {
+            // Không có bùa chú tương ứng -> Suy yếu tất cả bùa chú
+            for (Spell spell : spells) {
+                spell.setPower(spell.getPower() - 20);
+            }
+            
+            // Lọc bỏ bùa chú yếu quá (power <= 0)
+            // LƯU Ý: Phải sử dụng ListIterator hoặc removeIf để xóa an toàn khi lặp.
+            this.spells.removeIf(spell -> spell.getPower() <= 0);
+        }
+    }
+
+    @Override
+    public String toString() {
+        // Định dạng đầu ra: {StudentName} {CompetitionPoints} {NumberOfSpellsLeft}
+        return String.format("%s %d %d", name, competitionPoints, getNumberOfSpellsLeft());
+    }
+}
+
+// --- LỚP MAIN ---
+public class Main {
+    
+    // Sử dụng LinkedHashMap để duy trì thứ tự chèn (thứ tự xuất hiện ban đầu)
+    private static Map<String, Student> studentMap = new LinkedHashMap<>();
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // --- 1. Đọc và tạo Bùa chú/Học sinh ---
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) continue;
+            if (line.equals("Trial")) break;
+
+            String[] parts = line.split(" ");
+            if (parts.length != 4) continue;
+
+            String studentName = parts[0];
+            String spellType = parts[1];
+            String spellName = parts[2];
+            int power = Integer.parseInt(parts[3]);
+
+            // Lấy hoặc tạo Student
+            Student student = studentMap.getOrDefault(studentName, new Student(studentName));
+            studentMap.putIfAbsent(studentName, student);
+
+            // Tạo Spell và thêm vào Student
+            Spell spell = createSpell(spellType, spellName, power);
+            if (spell != null) {
+                student.addSpell(spell);
+            }
+        }
+
+        // --- 2. Đọc và xử lý Thử thách (Trial) ---
+        List<String> trials = new ArrayList<>();
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) continue;
+            if (line.equals("Graduation")) break;
+            trials.add(line);
+        }
+
+        for (String trial : trials) {
+            for (Student student : studentMap.values()) {
+                student.takeTrial(trial);
+            }
+        }
+        
+        // --- 3. Xử lý Tốt nghiệp (Graduation) và Sắp xếp ---
+        List<Student> finalRanking = new ArrayList<>(studentMap.values());
+        
+        // Sắp xếp giảm dần theo competitionPoints (Ổn định: giữ nguyên thứ tự ban đầu khi bằng điểm)
+        Collections.sort(finalRanking, new Comparator<Student>() {
+            @Override
+            public int compare(Student s1, Student s2) {
+                // Giảm dần theo điểm
+                return Integer.compare(s2.getCompetitionPoints(), s1.getCompetitionPoints());
+            }
+        });
+
+        // --- 4. In kết quả ---
+        for (Student student : finalRanking) {
+            System.out.println(student);
+        }
+
+        scanner.close();
+    }
+    
+    private static Spell createSpell(String type, String name, int power) {
+        switch (type) {
+            case "FireSpell":
+                return new FireSpell(name, power);
+            case "WaterSpell":
+                return new WaterSpell(name, power);
+            case "EarthSpell":
+                return new EarthSpell(name, power);
+            default:
+                return null;
+        }
+    }
+}
