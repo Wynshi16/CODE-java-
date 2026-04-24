@@ -1,0 +1,77 @@
+class Money {
+    private int euros;
+    private int cents;
+
+    public Money(int euros, int cents) {
+        this.euros = euros;
+        this.cents = cents;
+        normalize();
+    }
+
+    private void normalize() {
+        if (cents >= 100) {
+            euros += cents / 100;
+            cents = cents % 100;
+        } else if (cents < 0) {
+            int borrow = (Math.abs(cents) + 99) / 100;
+            euros -= borrow;
+            cents += borrow * 100;
+        }
+        if (euros < 0) {
+            euros = 0;
+            cents = 0;
+        }
+    }
+
+    public Money plus(Money added) {
+        return new Money(this.euros + added.euros, this.cents + added.cents);
+    }
+
+    public boolean lessThan(Money compared) {
+        if (this.euros < compared.euros) return true;
+        if (this.euros == compared.euros && this.cents < compared.cents) return true;
+        return false;
+    }
+
+    public Money minus(Money minus) {
+        int totalThis = this.euros * 100 + this.cents;
+        int totalMinus = minus.euros * 100 + minus.cents;
+        int diff = totalThis - totalMinus;
+        if (diff < 0) diff = 0;
+        return new Money(diff / 100, diff % 100);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d.%02de", euros, cents);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Task 5 (1)
+        Money a = new Money(10, 8);
+        Money b = new Money(5, 5);
+        Money c = a.plus(b);
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
+
+        // Task 5 (2)
+        Money u = new Money(10, 0);
+        Money y = new Money(3, 0);
+        Money w = new Money(5, 0);
+        System.out.println(u.lessThan(y));
+        System.out.println(y.lessThan(w));
+
+        // Task 5 (3)
+        Money m = new Money(10, 0);
+        Money n = new Money(3, 50);
+        Money o = m.minus(n);
+        System.out.println(m);
+        System.out.println(n);
+        System.out.println(o);
+        o = o.minus(m);
+        System.out.println(o);
+    }
+}
