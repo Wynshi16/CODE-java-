@@ -1,0 +1,51 @@
+import java.util.Scanner;
+
+interface Callable {
+    void call(String number);
+}
+
+interface Browsable {
+    void browse(String url);
+}
+
+class Smartphone implements Callable, Browsable {
+    @Override
+    public void call(String number) {
+        if (!number.matches("\\d+")) {
+            System.out.println("Invalid number!");
+        } else {
+            System.out.println("Calling... " + number);
+        }
+    }
+
+    @Override
+    public void browse(String url) {
+        if (url.matches(".*\\d.*")) {
+            System.out.println("Invalid URL!");
+        } else {
+            System.out.println("Browsing: " + url + "!");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int testCases = Integer.parseInt(sc.nextLine());
+
+        for (int t = 0; t < testCases; t++) {
+            String[] numbers = sc.nextLine().split(" ");
+            String[] urls = sc.nextLine().split(" ");
+
+            Smartphone phone = new Smartphone();
+
+            for (String number : numbers) {
+                phone.call(number);
+            }
+
+            for (String url : urls) {
+                phone.browse(url);
+            }
+        }
+    }
+}
