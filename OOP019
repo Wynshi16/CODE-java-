@@ -1,0 +1,37 @@
+class MyStuff {
+    private String name;
+
+    MyStuff(String name) {
+        this.name = name;
+    }
+
+    // Override equals để so sánh giá trị name
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // cùng tham chiếu
+        if (obj == null || getClass() != obj.getClass()) return false;
+        MyStuff other = (MyStuff) obj;
+        return this.name.equals(other.name); // so sánh giá trị name
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyStuff m1 = new MyStuff("PC");
+        MyStuff m2 = new MyStuff("PC");
+
+        // So sánh giá trị
+        System.out.print("value compared: ");
+        if (m2.equals(m1))
+            System.out.println("same");
+        else
+            System.out.println("different");
+
+        // So sánh tham chiếu
+        System.out.print("reference compared: ");
+        if (m2 == m1)
+            System.out.println("same");
+        else
+            System.out.println("different");
+    }
+}
