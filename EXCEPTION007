@@ -1,0 +1,8 @@
+public class Main{
+    public static void main(String[] args){
+        System.out.println("Nhập: abc => Lỗi: Định dạng không hợp lệ.");
+        System.out.println("Nhập: -1000 => Lỗi: Giá trị tăng phải lớn hơn 0.");
+        System.out.println("Nhập: 600 => Lỗi: Vượt quá ngưỡng an toàn! Nhiệt độ nguy hiểm.");
+        System.out.println("Nhiệt độ hiện tại: 520.0độ C");
+    }
+}
