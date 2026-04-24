@@ -1,0 +1,86 @@
+import java.util.Scanner;
+import java.lang.Math;
+import java.text.DecimalFormat;
+
+class Vector2D {
+    private int dx;
+    private int dy;
+
+    // Constructor
+    public Vector2D(int dx, int dy) {
+        this.dx = dx;
+        this.dy = dy;
+    }
+
+    // Getters
+    public int getDx() {
+        return dx;
+    }
+
+    public int getDy() {
+        return dy;
+    }
+
+    // Setters
+    public void setDx(int dx) {
+        this.dx = dx;
+    }
+
+    public void setDy(int dy) {
+        this.dy = dy;
+    }
+
+    /**
+     * Phương thức dịch vector theo công thức:
+     * dx = dx + tx, dy = dy + ty.
+     * * @param tx Thành phần dịch chuyển theo trục x.
+     * @param ty Thành phần dịch chuyển theo trục y.
+     */
+    public void translate(int tx, int ty) {
+        this.dx += tx;
+        this.dy += ty;
+    }
+
+    /**
+     * Phương thức tính độ lớn (độ dài) của vector theo công thức:
+     * magnitude = sqrt(dx^2 + dy^2).
+     * * @return Độ lớn của vector.
+     */
+    public double magnitude() {
+        return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Đọc số lượng test case
+        int numTestCases = scanner.nextInt();
+        
+        // Định dạng đầu ra với 3 chữ số thập phân
+        DecimalFormat df = new DecimalFormat("0.000");
+
+        for (int i = 0; i < numTestCases; i++) {
+            // Nhập dx và dy của vector V
+            int dx = scanner.nextInt();
+            int dy = scanner.nextInt();
+            
+            // Tạo vector V
+            Vector2D v = new Vector2D(dx, dy);
+
+            // Dịch vector V theo (tx, ty) = (-2, 3)
+            final int TX = -2;
+            final int TY = 3;
+            v.translate(TX, TY);
+            
+            // Tính độ lớn của vector V sau khi dịch
+            double magnitude = v.magnitude();
+
+            // In ra độ lớn với 3 chữ số thập phân
+            System.out.println(df.format(magnitude));
+        }
+        
+        scanner.close();
+    }
+}
