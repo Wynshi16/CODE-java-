@@ -1,0 +1,96 @@
+import java.util.Scanner;
+
+// Lớp Pair<T> sử dụng Generic
+class Pair<T> {
+    private T first;
+    private T second;
+
+    // Constructor
+    public Pair(T first, T second) {
+        this.first = first;
+        this.second = second;
+    }
+
+    // Getter cho first
+    public T getFirst() {
+        return first;
+    }
+
+    // Setter cho first
+    public void setFirst(T first) {
+        this.first = first;
+    }
+
+    // Getter cho second
+    public T getSecond() {
+        return second;
+    }
+
+    // Setter cho second
+    public void setSecond(T second) {
+        this.second = second;
+    }
+
+    // Phương thức swap() để hoán đổi first và second
+    public void swap() {
+        T temp = this.first;
+        this.first = this.second;
+        this.second = temp;
+    }
+
+    // Phương thức in kết quả đã hoán đổi theo định dạng yêu cầu
+    public void printSwapped() {
+        // Kiểm tra kiểu dữ liệu của T
+        if (first instanceof String) {
+            // Nếu là String: in ra với dấu nháy đơn bao bọc
+            System.out.printf("'%s' '%s'%n", second, first);
+        } else {
+            // Nếu là kiểu số (Integer, Double, v.v.): in ra trực tiếp
+            System.out.println(second + " " + first);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Dòng đầu tiên là số test case
+        int t = Integer.parseInt(scanner.nextLine());
+        
+        for (int i = 0; i < t; i++) {
+            // Đọc dòng input
+            String line = scanner.nextLine();
+            String[] parts = line.split(" ");
+            
+            if (parts.length < 2) continue; // Bỏ qua nếu dòng không đủ 2 phần tử
+
+            // Thử xác định kiểu dữ liệu: Số hay Chuỗi
+            
+            // 1. Thử là kiểu số (Integer)
+            try {
+                int val1 = Integer.parseInt(parts[0]);
+                int val2 = Integer.parseInt(parts[1]);
+                
+                // Tạo Pair<Integer>
+                Pair<Integer> pair = new Pair<>(val1, val2);
+                
+                // In kết quả đã hoán đổi (hoán đổi được thực hiện trong hàm in)
+                pair.printSwapped();
+                
+            } catch (NumberFormatException e) {
+                // 2. Nếu không phải là số, xem là kiểu Chuỗi (String)
+                String str1 = parts[0];
+                String str2 = parts[1];
+                
+                // Tạo Pair<String>
+                Pair<String> pair = new Pair<>(str1, str2);
+                
+                // In kết quả đã hoán đổi (hoán đổi được thực hiện trong hàm in)
+                pair.printSwapped();
+            }
+        }
+        
+        scanner.close();
+    }
+}
