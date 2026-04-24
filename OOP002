@@ -1,0 +1,109 @@
+import java.util.Scanner;
+
+// Lớp Inventor (Nhà phát minh)
+class Inventor {
+    private String name;
+    private String field;
+    private String nationality;
+
+    // Constructor
+    public Inventor(String name, String field, String nationality) throws IllegalArgumentException {
+        this.name = name;
+        this.field = field;
+        
+        // Logic kiểm tra quốc tịch
+        if (nationality.equals("VN") || nationality.equals("INT")) {
+            this.nationality = nationality;
+        } else {
+            throw new IllegalArgumentException("Invalid nationality. Only 'VN' or 'INT' allowed.");
+        }
+    }
+
+    // Getter cho name
+    public String getName() {
+        return name;
+    }
+
+    // Getter cho field
+    public String getField() {
+        return field;
+    }
+
+    // Getter cho nationality
+    public String getNationality() {
+        return nationality;
+    }
+    
+    // Phương thức toString() cho Inventor
+    @Override
+    public String toString() {
+        return "Inventor[name=" + name + ", field=" + field + ", nationality=" + nationality + "]";
+    }
+}
+
+// Lớp Patent (Bằng sáng chế)
+class Patent {
+    private String title;
+    private int year;
+    private Inventor inventor; // Mối quan hệ Composition/Association
+
+    // Constructor
+    public Patent(String title, int year, Inventor inventor) {
+        this.title = title;
+        this.year = year;
+        this.inventor = inventor;
+    }
+
+    // Getter cho title
+    public String getTitle() {
+        return title;
+    }
+
+    // Getter cho year
+    public int getYear() {
+        return year;
+    }
+
+    // Getter cho inventor
+    public Inventor getInventor() {
+        return inventor;
+    }
+
+    // Phương thức toString() cho Patent
+    @Override
+    public String toString() {
+        return "Patent[title=" + title + ", year=" + year + ", " + inventor.toString() + "]";
+    }
+}
+
+// Lớp Main để thực thi
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Dữ liệu vào
+        String inventorName = scanner.nextLine();
+        String inventorField = scanner.nextLine();
+        String inventorNationality = scanner.nextLine();
+        String patentTitle = scanner.nextLine();
+        int patentYear = scanner.nextInt();
+        
+        // Đóng scanner
+        scanner.close();
+
+        try {
+            // 1. Tạo đối tượng Inventor
+            Inventor inventor = new Inventor(inventorName, inventorField, inventorNationality);
+            
+            // 2. Tạo đối tượng Patent, gắn với Inventor vừa tạo
+            Patent patent = new Patent(patentTitle, patentYear, inventor);
+            
+            // 3. In kết quả theo định dạng yêu cầu
+            System.out.println(patent.toString());
+            
+        } catch (IllegalArgumentException e) {
+            // Xử lý ngoại lệ nếu quốc tịch không hợp lệ
+            System.out.println(e.getMessage());
+        }
+    }
+}
