@@ -1,0 +1,137 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.text.DecimalFormat;
+
+// Lớp trừu tượng: Vehicle
+abstract class Vehicle {
+    protected double price;
+
+    // Constructor
+    public Vehicle(double price) {
+        this.price = price;
+    }
+
+    // Getter
+    public double getPrice() {
+        return price;
+    }
+
+    // Phương thức trừu tượng tính thuế
+    public abstract double calculateTax();
+    
+    // Phương thức trừu tượng lấy thông tin chi tiết để in
+    public abstract String getDetails();
+}
+
+// Lớp Car (Ô tô)
+class Car extends Vehicle {
+    private int numberOfSeats;
+
+    // Constructor
+    public Car(double price, int numberOfSeats) {
+        super(price);
+        this.numberOfSeats = numberOfSeats;
+    }
+
+    // Getter
+    public int getNumberOfSeats() {
+        return numberOfSeats;
+    }
+
+    // Ghi đè phương thức tính thuế: price * 0.05
+    @Override
+    public double calculateTax() {
+        return price * 0.05;
+    }
+
+    // Ghi đè phương thức lấy thông tin chi tiết
+    @Override
+    public String getDetails() {
+        return "Car - Giá: " + String.format("%.2f", price) + 
+               ", Số ghế: " + numberOfSeats;
+    }
+}
+
+// Lớp Truck (Xe tải)
+class Truck extends Vehicle {
+    private double loadCapacity; // Tải trọng (tấn)
+
+    // Constructor
+    public Truck(double price, double loadCapacity) {
+        super(price);
+        this.loadCapacity = loadCapacity;
+    }
+
+    // Getter
+    public double getLoadCapacity() {
+        return loadCapacity;
+    }
+
+    // Ghi đè phương thức tính thuế: price * 0.1 + loadCapacity * 1000
+    @Override
+    public double calculateTax() {
+        return price * 0.1 + loadCapacity * 1000;
+    }
+
+    // Ghi đè phương thức lấy thông tin chi tiết
+    @Override
+    public String getDetails() {
+        return "Truck - Giá: " + String.format("%.2f", price) + 
+               ", Tải trọng: " + String.format("%.2f", loadCapacity) + " tấn";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Đọc số lượng test case
+        int numTestCases = scanner.nextInt();
+        scanner.nextLine(); // Đọc bỏ dòng còn lại
+
+        ArrayList<Vehicle> vehicles = new ArrayList<>();
+        double totalTax = 0.0;
+        
+        // Định dạng in tiền tệ
+        DecimalFormat df = new DecimalFormat("0.00");
+
+        for (int i = 0; i < numTestCases; i++) {
+            String line = scanner.nextLine();
+            String[] parts = line.split(" ");
+            
+            String type = parts[0];
+            double price = Double.parseDouble(parts[1]);
+            double auxValue = Double.parseDouble(parts[2]);
+
+            Vehicle vehicle = null;
+
+            if (type.equals("Car")) {
+                int numberOfSeats = (int) auxValue;
+                vehicle = new Car(price, numberOfSeats);
+            } else if (type.equals("Truck")) {
+                double loadCapacity = auxValue;
+                vehicle = new Truck(price, loadCapacity);
+            }
+
+            if (vehicle != null) {
+                vehicles.add(vehicle);
+                totalTax += vehicle.calculateTax();
+            }
+        }
+        
+        // --- In kết quả ---
+        System.out.println("Danh sách phương tiện và thuế:");
+        
+        for (Vehicle v : vehicles) {
+            double tax = v.calculateTax();
+            
+            // In chi tiết: [Loại] - [Chi tiết thuộc tính] - Thuế: [Giá trị]
+            System.out.println(v.getDetails() + ", Thuế: " + df.format(tax));
+        }
+
+        // In tổng thuế
+        System.out.println("Tổng thuế phải đóng: " + df.format(totalTax));
+        
+        scanner.close();
+    }
+}
