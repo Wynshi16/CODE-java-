@@ -1,0 +1,133 @@
+import java.util.*;
+
+abstract class Asset {
+    protected String name;
+    protected double value;
+    protected Date acquisitionDate;
+
+    public Asset(String name, double value) {
+        this.name = name;
+        this.value = value;
+        this.acquisitionDate = new Date(); // gán ngày hiện tại
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public abstract double getDepreciation();
+}
+
+class FixedAsset extends Asset {
+    private double usefulLife;
+
+    public FixedAsset(String name, double value, double usefulLife) {
+        super(name, value);
+        this.usefulLife = usefulLife;
+    }
+
+    @Override
+    public double getDepreciation() {
+        return value / usefulLife;
+    }
+}
+
+class CurrentAsset extends Asset {
+    private double liquidationValue;
+
+    public CurrentAsset(String name, double value, double liquidationValue) {
+        super(name, value);
+        this.liquidationValue = liquidationValue;
+    }
+
+    @Override
+    public double getDepreciation() {
+        return value * 0.1; // 10% mỗi năm
+    }
+}
+
+class IntangibleAsset extends Asset {
+    private double amortizationPeriod;
+
+    public IntangibleAsset(String name, double value, double amortizationPeriod) {
+        super(name, value);
+        this.amortizationPeriod = amortizationPeriod;
+    }
+
+    @Override
+    public double getDepreciation() {
+        return value / amortizationPeriod;
+    }
+}
+
+class AssetManager {
+    private List<Asset> assets = new ArrayList<>();
+
+    public void addAsset(Asset asset) {
+        assets.add(asset);
+    }
+
+    public double getTotalValue() {
+        double sum = 0;
+        for (Asset a : assets)
+            sum += a.getValue();
+        return sum;
+    }
+
+    public double getTotalDepreciation() {
+        double sum = 0;
+        for (Asset a : assets)
+            sum += a.getDepreciation();
+        return sum;
+    }
+
+    public List<Asset> getAssets() {
+        return assets;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        AssetManager manager = new AssetManager();
+
+        int n = Integer.parseInt(sc.nextLine());
+
+        for (int i = 0; i < n; i++) {
+            String[] tokens = sc.nextLine().split(" ");
+            String type = tokens[0];
+            String name = tokens[1];
+            double value = Double.parseDouble(tokens[2]);
+            double param = Double.parseDouble(tokens[3]);
+
+            switch (type) {
+                case "FixedAsset":
+                    manager.addAsset(new FixedAsset(name, value, param));
+                    break;
+                case "CurrentAsset":
+                    manager.addAsset(new CurrentAsset(name, value, param));
+                    break;
+                case "IntangibleAsset":
+                    manager.addAsset(new IntangibleAsset(name, value, param));
+                    break;
+                default:
+                    System.out.println("Invalid asset type");
+            }
+        }
+
+        // Hiển thị danh sách tài sản
+        for (Asset a : manager.getAssets()) {
+            System.out.println("Asset Name: " + a.getName());
+            System.out.printf("Asset Value: %.1f\n", a.getValue());
+            System.out.printf("Depreciation: %.1f\n", a.getDepreciation());
+            System.out.println("---------------------------");
+        }
+
+        System.out.printf("Total Value of Assets: %.1f\n", manager.getTotalValue());
+        System.out.printf("Total Depreciation of Assets: %.1f\n", manager.getTotalDepreciation());
+    }
+}
