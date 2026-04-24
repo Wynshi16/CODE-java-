@@ -1,0 +1,82 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main {
+
+    /**
+     * Tính hiệu lớn nhất giữa tổng hai mảng con kích thước K và N-K.
+     * @param N Số phần tử của mảng A.
+     * @param K Kích thước mảng con thứ nhất.
+     * @param A Mảng các số nguyên.
+     * @return Hiệu lớn nhất.
+     */
+    public static long solve(int N, int K, int[] A) {
+        // 1. Sắp xếp mảng theo thứ tự tăng dần
+        Arrays.sort(A);
+        
+        // Tính tổng toàn bộ mảng S
+        long totalSum = 0;
+        for (int x : A) {
+            totalSum += x;
+        }
+
+        // 2. Xét 2 trường hợp: mảng con kích thước K có K phần tử nhỏ nhất hoặc lớn nhất.
+        // Cần chọn K phần tử nhỏ hơn giữa K và N-K để đảm bảo ta đang chọn nhóm nhỏ nhất/lớn nhất.
+        // Ta chỉ cần tính tổng của nhóm nhỏ hơn (minSize)
+        int minSize = Math.min(K, N - K);
+        
+        // --- Trường hợp 1: Nhóm Subarray 1 có K phần tử nhỏ nhất (từ A[0] đến A[minSize-1]) ---
+        // Tổng của nhóm Subarray 1 (nhóm nhỏ nhất)
+        long sumMinGroup = 0;
+        for (int i = 0; i < minSize; i++) {
+            sumMinGroup += A[i];
+        }
+        
+        // Tổng của nhóm Subarray 2 (nhóm lớn nhất)
+        long sumMaxGroup = totalSum - sumMinGroup;
+        
+        // Hiệu (lấy giá trị tuyệt đối)
+        long diff1 = Math.abs(sumMaxGroup - sumMinGroup);
+        
+        // --- Trường hợp 2: Nhóm Subarray 1 có K phần tử lớn nhất (từ A[N-minSize] đến A[N-1]) ---
+        // Tổng của nhóm Subarray 1 (nhóm lớn nhất)
+        long sumMaxGroupK = 0;
+        for (int i = N - minSize; i < N; i++) {
+            sumMaxGroupK += A[i];
+        }
+
+        // Tổng của nhóm Subarray 2 (nhóm nhỏ nhất)
+        long sumMinGroupN_K = totalSum - sumMaxGroupK;
+        
+        // Hiệu
+        long diff2 = Math.abs(sumMaxGroupK - sumMinGroupN_K);
+        
+        // Kết quả là hiệu lớn nhất giữa hai trường hợp
+        return Math.max(diff1, diff2);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Đọc số lượng bộ test T
+        int T = scanner.nextInt();
+        
+        for (int t = 0; t < T; t++) {
+            // Đọc N và K
+            int N = scanner.nextInt();
+            int K = scanner.nextInt();
+            
+            // Khởi tạo và đọc mảng A
+            int[] A = new int[N];
+            for (int i = 0; i < N; i++) {
+                A[i] = scanner.nextInt();
+            }
+            
+            // Gọi hàm giải quyết và in kết quả
+            long result = solve(N, K, A);
+            System.out.println(result);
+        }
+        
+        scanner.close();
+    }
+}
