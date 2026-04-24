@@ -1,0 +1,54 @@
+import java.util.*;
+
+class Student {
+    private String name;
+    private int age;
+    private static int count = 0;
+
+    public Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+        count++;
+    }
+
+    public void display() {
+        if (age >= 18) {
+            System.out.println(name);
+        }
+    }
+
+    public static int getCount() {
+        return count;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Student> students = new ArrayList<>();
+
+        while (sc.hasNextLine()) {
+            String name = sc.nextLine().trim();
+            if (name.isEmpty()) break;
+            if (!sc.hasNextLine()) break;
+            String ageStr = sc.nextLine().trim();
+            try {
+                int age = Integer.parseInt(ageStr);
+                Student s = new Student(name, age);
+                students.add(s);
+            } catch (NumberFormatException e) {
+                // bỏ qua nếu tuổi không hợp lệ
+            }
+        }
+
+        // Gọi display() cho từng đối tượng
+        for (Student s : students) {
+            s.display();
+        }
+
+        // In tổng số đối tượng được khởi tạo
+        System.out.println(Student.getCount());
+
+        sc.close();
+    }
+}
