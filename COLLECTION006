@@ -1,0 +1,32 @@
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int T = Integer.parseInt(sc.nextLine()); // số lượng test case
+        
+        while (T-- > 0) {
+            String[] parts = sc.nextLine().trim().split("\\s+");
+            Map<Integer, Integer> freq = new HashMap<>();
+            
+            // Duyệt qua từng cặp khóa-giá trị (key, value)
+            for (int i = 1; i < parts.length; i += 2) {
+                int value = Integer.parseInt(parts[i]);
+                freq.put(value, freq.getOrDefault(value, 0) + 1);
+            }
+            
+            // Tìm tần suất xuất hiện ít nhất
+            int minFreq = Collections.min(freq.values());
+            
+            // Tìm tất cả các giá trị có tần suất ít nhất
+            int result = Integer.MAX_VALUE;
+            for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {
+                if (entry.getValue() == minFreq) {
+                    result = Math.min(result, entry.getKey());
+                }
+            }
+            
+            System.out.println(result);
+        }
+    }
+}
