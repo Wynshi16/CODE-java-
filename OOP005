@@ -1,0 +1,182 @@
+import java.util.*;
+
+class Note {
+    private int id;
+    private String date;
+    private String content;
+
+    public Note(int id, String date, String content) {
+        this.id = id;
+        this.date = date;
+        this.content = content;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    // Format lại "Jan0123" -> "01 Jan 23"
+    public String getFormattedDate() {
+        if (date.length() < 7) return date;
+        String month = date.substring(0, 3);
+        String day = date.substring(3, 5);
+        String year = date.substring(5);
+        return day + " " + month + " " + year;
+    }
+
+    @Override
+    public String toString() {
+        return getFormattedDate() + " | " + content;
+    }
+}
+
+class Account {
+    private String id;
+    private String name;
+    private ArrayList<Note> notes;
+    private int nextNoteId = 1;
+
+    public Account(String id, String name) {
+        this.id = id;
+        this.name = name;
+        this.notes = new ArrayList<>();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void addNote(String date, String content) {
+        notes.add(new Note(nextNoteId++, date, content));
+    }
+
+    public void shareNote(Account target, int noteId) {
+        for (Note n : notes) {
+            if (n.getId() == noteId) {
+                // khi chia sẻ, giữ nguyên nội dung và ngày (định dạng gốc)
+                target.notes.add(new Note(target.nextNoteId++, n.getDate(), n.getContent()));
+                return;
+            }
+        }
+    }
+
+    public void display() {
+        System.out.println("Account: " + name);
+        for (Note n : notes) {
+            System.out.println(n);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        try {
+            if (!sc.hasNextInt()) {
+                System.out.println("invalid input");
+                return;
+            }
+            int n = sc.nextInt();
+            sc.nextLine();
+
+            if (n <= 0) {
+                System.out.println("invalid input");
+                return;
+            }
+
+            // tạo danh sách tài khoản
+            LinkedHashMap<String, Account> accounts = new LinkedHashMap<>();
+            for (int i = 1; i <= n; i++) {
+                if (!sc.hasNextLine()) {
+                    System.out.println("invalid input");
+                    return;
+                }
+                String name = sc.nextLine().trim();
+                String id = String.format("%03d", i);
+                accounts.put(id, new Account(id, name));
+            }
+
+            // đọc lệnh đến hết input
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine().trim();
+                if (line.isEmpty()) continue;
+                String[] parts = line.split(" ", 3);
+                if (parts.length < 3) {
+                    System.out.println("invalid input");
+                    return;
+                }
+
+                String accId = parts[0];
+                String action = parts[1];
+
+                if (!accounts.containsKey(accId)) {
+                    System.out.println("invalid input");
+                    return;
+                }
+
+                Account acc = accounts.get(accId);
+
+                if (action.equals("Add")) {
+                    String[] rest = parts[2].split(" ", 2);
+                    if (rest.length < 2) {
+                        System.out.println("invalid input");
+                        return;
+                    }
+                    String date = rest[0];
+                    String content = rest[1];
+
+                    // kiểm tra định dạng ngày
+                    if (!date.matches("^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\d{4,}$")) {
+                        System.out.println("invalid input");
+                        return;
+                    }
+
+                    acc.addNote(date, content);
+
+                } else if (action.equals("Share")) {
+                    String[] rest = parts[2].split(" ");
+                    if (rest.length != 2) {
+                        System.out.println("invalid input");
+                        return;
+                    }
+                    String targetId = rest[0];
+                    int noteId;
+                    try {
+                        noteId = Integer.parseInt(rest[1]);
+                    } catch (Exception e) {
+                        System.out.println("invalid input");
+                        return;
+                    }
+
+                    if (!accounts.containsKey(targetId)) {
+                        System.out.println("invalid input");
+                        return;
+                    }
+
+                    acc.shareNote(accounts.get(targetId), noteId);
+                } else {
+                    System.out.println("invalid input");
+                    return;
+                }
+            }
+
+            // in kết quả
+            for (Account a : accounts.values()) {
+                a.display();
+            }
+
+        } catch (Exception e) {
+            System.out.println("invalid input");
+        } finally {
+            sc.close();
+        }
+    }
+}
