@@ -1,0 +1,141 @@
+import java.util.*;
+
+
+class EmptyStackException extends RuntimeException {
+    public EmptyStackException(String message) {
+        super(message);
+    }
+}
+
+
+class StackGeneric<T> {
+    private ArrayList<T> elements = new ArrayList<>();
+
+    public void push(T item) {
+        elements.add(item);
+    }
+
+    public T pop() {
+        if (elements.isEmpty()) {
+            throw new EmptyStackException("Stack is empty");
+        }
+        return elements.remove(elements.size() - 1);
+    }
+
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
+
+    public ArrayList<T> getAll() {
+        return elements;
+    }
+}
+
+
+class Task {
+    String name;
+    int priority;
+
+    public Task(String name, int priority) {
+        
+        name = name.trim();
+        if (name.endsWith(".")) {
+            name = name.substring(0, name.length() - 1);
+        }
+        this.name = name;
+        this.priority = priority;
+    }
+
+    @Override
+    public String toString() {
+        return "Task [" + name + "] " + priority;
+    }
+}
+
+
+class History {
+    String action;
+
+    public History(String action) {
+        this.action = action.trim();
+    }
+
+    @Override
+    public String toString() {
+        return "History [" + action + "]";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        StackGeneric<Task> taskStack = new StackGeneric<>();
+        StackGeneric<History> historyStack = new StackGeneric<>();
+
+        
+        while (true) {
+            if (!sc.hasNextLine()) break;
+            String line = sc.nextLine().trim();
+            if (line.equals("exit")) break;
+            if (line.isEmpty()) continue;
+
+            if (line.startsWith("Task")) {
+                int open = line.indexOf('[');
+                int close = line.indexOf(']');
+                String name = line.substring(open + 1, close);
+
+                String after = line.substring(close + 1).trim();
+                int prio = Integer.parseInt(after);
+
+                taskStack.push(new Task(name, prio));
+            } else if (line.startsWith("History")) {
+                int open = line.indexOf('[');
+                int close = line.indexOf(']');
+                String content = line.substring(open + 1, close);
+                historyStack.push(new History(content));
+            }
+        }
+
+     
+        System.out.println("[Task Stack]");
+        ArrayList<Task> allTasks = taskStack.getAll();
+
+        if (allTasks.isEmpty()) {
+            System.out.println("Không có công việc trong ngăn xếp.");
+        } else {
+            
+Map<Integer, List<Task>> byPriority = new TreeMap<>(); 
+            for (Task t : allTasks) {
+                byPriority.putIfAbsent(t.priority, new ArrayList<>());
+                byPriority.get(t.priority).add(t);
+            }
+
+            
+            for (Map.Entry<Integer, List<Task>> entry : byPriority.entrySet()) {
+                List<Task> list = entry.getValue();
+                for (int i = list.size() - 1; i >= 0; i--) {
+                    System.out.println(list.get(i));
+                }
+            }
+        }
+
+        System.out.println();
+
+       
+        System.out.println("[History Stack]");
+        ArrayList<History> allHistory = historyStack.getAll();
+
+        if (allHistory.isEmpty()) {
+            System.out.println("Không có lịch sử trong ngăn xếp.");
+        } else {
+            
+            allHistory.sort((a, b) -> b.action.compareTo(a.action));
+            for (History h : allHistory) {
+                System.out.println(h);
+            }
+        }
+
+        sc.close();
+    }
+}
