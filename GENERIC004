@@ -1,0 +1,169 @@
+import java.util.*;class EmptyQueueException extends RuntimeException {}class Task {
+
+    String name;
+
+    int priority;
+
+    public Task(String name, int priority) {
+
+        this.name = name;
+
+        this.priority = priority;
+
+    }
+
+    public String toString() {
+
+        return "Task [" + name + "] " + priority;
+
+    }
+
+}class Student {
+
+    String name;
+
+    double gpa;
+
+    public Student(String name, double gpa) {
+
+        this.name = name;
+
+        this.gpa = gpa;
+
+    }
+
+    public String toString() {
+
+        return "Student [" + name + "] " + gpa;
+
+    }
+
+}class PriorityQueueGeneric<T> {
+
+    List<T> list = new ArrayList<>();
+
+    Comparator<T> comparator;
+
+    public PriorityQueueGeneric(Comparator<T> comparator) {
+
+        this.comparator = comparator;
+
+    }
+
+    public void add(T item) {
+
+        list.add(item);
+
+    }
+
+    public List<T> poll() {
+
+        if (list.isEmpty()) throw new EmptyQueueException();
+
+        List<T> result = new ArrayList<>(list);
+
+        result.sort(comparator);
+
+        return result;
+
+    }
+
+    public boolean isEmpty() {
+
+        return list.isEmpty();
+
+    }
+
+}public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        PriorityQueueGeneric<Task> taskQ = new PriorityQueueGeneric<>(
+
+            (a, b) -> a.priority == b.priority ? 0 : a.priority - b.priority
+
+        );
+
+        PriorityQueueGeneric<Student> studentQ = new PriorityQueueGeneric<>(
+
+            (a, b) -> a.gpa == b.gpa ? 0 : Double.compare(b.gpa, a.gpa)
+
+        );
+
+
+
+        while (true) {
+
+            String line = sc.nextLine();
+
+            if (line.equals("exit")) break;
+
+
+
+            if (line.startsWith("Task")) {
+
+                int start = line.indexOf('[') + 1;
+
+                int end = line.indexOf(']');
+
+                String name = line.substring(start, end).trim().replaceAll("\\.$", "");
+
+                String pri = line.substring(end + 1).trim();
+
+                int priority = Integer.parseInt(pri);
+
+                taskQ.add(new Task(name, priority));
+
+            } else if (line.startsWith("Student")) {
+
+                int start = line.indexOf('[') + 1;
+
+                int end = line.indexOf(']');
+
+                String name = line.substring(start, end).trim().replaceAll("\\.$", "");
+
+                String gp = line.substring(end + 1).trim();
+
+                double gpa = Double.parseDouble(gp);
+
+                studentQ.add(new Student(name, gpa));
+
+            }
+
+        }
+
+
+
+        System.out.println("[Task Queue]");
+
+        try {
+
+            for (Task t : taskQ.poll()) System.out.println(t);
+
+        } catch (EmptyQueueException e) {
+
+            System.out.println("Không có nhiệm vụ trong hàng đợi.");
+
+        }
+
+
+
+        System.out.println();
+
+        System.out.println("[Student Queue]");
+
+        try {
+
+            for (Student s : studentQ.poll()) System.out.println(s);
+
+        } catch (EmptyQueueException e) {
+
+            System.out.println("Không có sinh viên trong hàng đợi.");
+
+        }
+
+    }
+
+}
