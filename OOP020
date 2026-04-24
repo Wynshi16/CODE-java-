@@ -1,0 +1,29 @@
+interface A {
+    void m();
+    void n(String msg);
+}
+
+class C implements A {
+    public void m() {
+        System.out.println("Method m() of C");
+    }
+
+    // Phải khai báo public và đúng tham số
+    public void n(String msg) {
+        System.out.println("OOP23 " + msg);
+    }
+}
+
+// Lớp D kế thừa C
+class D extends C {
+    boolean d = true;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        D b = new D(); // tạo đối tượng
+        b.m();         // gọi phương thức m() từ lớp C
+        b.n("OOP23");  // gọi phương thức n() với tham số đúng
+        System.out.println(b.d); // in giá trị boolean d
+    }
+}
