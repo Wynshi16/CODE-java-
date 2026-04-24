@@ -1,0 +1,49 @@
+import java.util.Scanner;
+
+public class Main {
+
+    /**
+     * Phương thức giải quyết bài toán: đếm số cặp (A[i], A[j]) sao cho A[i] + A[j] = k và i < j.
+     * @param n Số lượng phần tử của mảng A.
+     * @param k Tổng cần tìm.
+     * @param A Mảng các số nguyên.
+     * @return Số lượng cặp có tổng bằng k.
+     */
+    public static int countPairs(int n, int k, int[] A) {
+        int count = 0;
+        // Duyệt qua tất cả các cặp phần tử (A[i], A[j]) với i < j
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (A[i] + A[j] == k) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Đọc số lượng bộ test T
+        int T = scanner.nextInt();
+        
+        for (int t = 0; t < T; t++) {
+            // Đọc n và k
+            int n = scanner.nextInt();
+            int k = scanner.nextInt();
+            
+            // Khởi tạo và đọc mảng A
+            int[] A = new int[n];
+            for (int i = 0; i < n; i++) {
+                A[i] = scanner.nextInt();
+            }
+            
+            // Gọi hàm giải quyết và in kết quả
+            int result = countPairs(n, k, A);
+            System.out.println(result);
+        }
+        
+        scanner.close();
+    }
+}
