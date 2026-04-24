@@ -1,0 +1,37 @@
+import java.util.Scanner;
+
+// Định nghĩa ngoại lệ tùy chỉnh
+class FileNameFormatExeption extends Exception {
+    public FileNameFormatExeption(String msg) {
+        super(msg);
+    }
+}
+
+class Test {
+    public static void open_file(String s) {
+        try {
+            f(s);
+            System.out.println("File opened");
+        } catch (FileNameFormatExeption fname) {
+            System.out.println("File name format");
+        } catch (Exception e) {
+            System.out.println("Exception");
+        }
+    }
+
+    public static void f(String s) throws FileNameFormatExeption {
+        if (s.contains(" ")) {
+            throw new FileNameFormatExeption("File name contains space");
+        }
+        // Nếu không có dấu cách, không ném ngoại lệ
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String s = sc.nextLine();
+        Test.open_file(s);
+        sc.close();
+    }
+}
