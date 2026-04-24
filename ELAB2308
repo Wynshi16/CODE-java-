@@ -1,0 +1,80 @@
+import java.text.DecimalFormat;
+import java.util.Scanner;
+
+abstract class Car {
+    protected double price;
+    protected int year;
+    protected static double maxPrice = 0;
+
+    public Car(double price, int year) {
+        this.price = price;
+        this.year = year;
+    }
+
+    public abstract double calculateSalePrice();
+
+    protected void updateMaxPrice(double salePrice) {
+        if (salePrice > maxPrice) {
+            maxPrice = salePrice;
+        }
+    }
+
+    @Override
+    public String toString() {
+        double salePrice = calculateSalePrice();
+        updateMaxPrice(salePrice);
+        DecimalFormat df = new DecimalFormat("#,###.00");
+        return "Price: " + df.format(salePrice) + " VND | Year: " + year;
+    }
+
+    public static String getMaxPriceFormatted() {
+        DecimalFormat df = new DecimalFormat("#,###.00");
+        return "Most Expensive: " + df.format(maxPrice) + " VND";
+    }
+}
+
+class ClassicCar extends Car {
+
+    public ClassicCar(double price, int year) {
+        super(price, year);
+    }
+
+    @Override
+    public double calculateSalePrice() {
+        // Giá lăn bánh = giá cơ bản * 1.12 + 20,000,000
+        return price * 1.12 + 20_000_000;
+    }
+}
+
+class SportCar extends Car {
+
+    public SportCar(double price, int year) {
+        super(price, year);
+    }
+
+    @Override
+    public double calculateSalePrice() {
+        if (year > 2018) return price * 0.8;
+        else if (year > 2010) return price * 0.5;
+        else return price * 0.1;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = Integer.parseInt(sc.nextLine());
+        Car[] cars = new Car[t];
+        for (int i = 0; i < t; i++) {
+            String[] parts = sc.nextLine().split(" ");
+            String type = parts[0];
+            double price = Double.parseDouble(parts[1]);
+            int year = Integer.parseInt(parts[2]);
+            if (type.equals("CC")) cars[i] = new ClassicCar(price, year);
+            else if (type.equals("SC")) cars[i] = new SportCar(price, year);
+            System.out.println(cars[i].toString());
+        }
+        System.out.println(Car.getMaxPriceFormatted());
+        sc.close();
+    }
+}
