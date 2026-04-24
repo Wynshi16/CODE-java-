@@ -1,0 +1,121 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Item {
+    private String name;
+    private double price;
+    private double discount;
+
+    public Item(String name, double price, double discount) {
+        this.name = name;
+        this.price = price;
+        this.discount = discount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s $%.2f (-$%.2f)", name, price, discount);
+    }
+}
+
+class Employee {
+    private String name;
+
+    public Employee(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+class GroceryBill {
+    protected List<Item> items;
+    protected double total;
+    protected Employee clerk;
+
+    public GroceryBill(Employee clerk) {
+        this.clerk = clerk;
+        this.items = new ArrayList<>();
+        this.total = 0;
+    }
+
+    public void add(Item item) {
+        items.add(item);
+        total += item.getPrice() - item.getDiscount();
+    }
+
+    public void printBill() {
+        System.out.println("items:");
+        for (Item item : items) {
+            System.out.println("   " + item.toString());
+        }
+        System.out.printf("total: $%.2f\n", total);
+        System.out.println("Clerk: " + clerk.getName());
+    }
+}
+
+class DiscountBill extends GroceryBill {
+    private double subTotal;
+    private double discountAmount;
+
+    public DiscountBill(Employee clerk) {
+        super(clerk);
+        this.subTotal = 0;
+        this.discountAmount = 0;
+    }
+
+    @Override
+    public void add(Item item) {
+        items.add(item);
+        subTotal += item.getPrice();
+        discountAmount += item.getDiscount();
+        total = subTotal - discountAmount;
+    }
+
+    @Override
+    public void printBill() {
+        System.out.println("items:");
+        for (Item item : items) {
+            System.out.println("   " + item.toString());
+        }
+        System.out.printf("sub-total: $%.2f\n", subTotal);
+        System.out.printf("discount: $%.2f\n", discountAmount);
+        System.out.printf("total: $%.2f\n", total);
+        System.out.println("Clerk: " + clerk.getName());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Clerk 1: Grocery Bill
+        Employee clerk1 = new Employee("Grocery Bill");
+        GroceryBill groceryBill = new GroceryBill(clerk1);
+        groceryBill.add(new Item("item 1", 2.3, 0));
+        groceryBill.add(new Item("item 2", 3.45, 0));
+        groceryBill.printBill();
+
+        System.out.println();
+
+        // Clerk 2: Discount Bill
+        Employee clerk2 = new Employee("Discount Bill");
+        DiscountBill discountBill = new DiscountBill(clerk2);
+        discountBill.add(new Item("item 3", 20, 15));
+        discountBill.add(new Item("item 4", 40, 35));
+        discountBill.add(new Item("item 5", 50, 35));
+        discountBill.printBill();
+    }
+}
