@@ -1,0 +1,24 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        // Đọc số lượng test case
+        int t = Integer.parseInt(sc.nextLine());
+        
+        for (int k = 0; k < t; k++) {
+            String line = sc.nextLine();
+            String[] parts = line.split(" ");
+            
+            String s = parts[0];
+            int index = Integer.parseInt(parts[1]);
+            
+            // Lấy ký tự tại index và in ra
+            char c = s.charAt(index);
+            System.out.println("The character at position " + index + " is " + c);
+        }
+        
+        sc.close();
+    }
+}
