@@ -1,0 +1,32 @@
+import java.util.Scanner;
+import java.math.BigInteger;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = Integer.parseInt(sc.nextLine().trim());
+        for (int i = 0; i < t; i++) {
+            String line = sc.nextLine().trim();
+            String[] parts = line.split(" ");
+            BigInteger a = new BigInteger(parts[0]);
+            String op = parts[1];
+            BigInteger b = new BigInteger(parts[2]);
+            BigInteger result;
+            switch(op) {
+                case "+":
+                    result = a.add(b);
+                    break;
+                case "-":
+                    result = a.subtract(b);
+                    break;
+                case "*":
+                    result = a.multiply(b);
+                    break;
+                default:
+                    result = BigInteger.ZERO; // dự phòng
+            }
+            System.out.println(result);
+        }
+        sc.close();
+    }
+}
