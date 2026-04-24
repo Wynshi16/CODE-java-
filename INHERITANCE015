@@ -1,0 +1,137 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.text.DecimalFormat;
+
+// Lớp trừu tượng: ElectronicDevice (Thiết bị điện tử)
+abstract class ElectronicDevice {
+    protected double basePrice;
+
+    // Constructor
+    public ElectronicDevice(double basePrice) {
+        this.basePrice = basePrice;
+    }
+
+    // Getter
+    public double getBasePrice() {
+        return basePrice;
+    }
+
+    // Phương thức trừu tượng tính chi phí bảo hành
+    public abstract double calculateWarrantyCost();
+    
+    // Phương thức trừu tượng lấy thông tin chi tiết để in
+    public abstract String getDetails(DecimalFormat df);
+}
+
+// Lớp Laptop
+class Laptop extends ElectronicDevice {
+    private int ramSize; // Kích thước RAM (GB)
+
+    // Constructor
+    public Laptop(double basePrice, int ramSize) {
+        super(basePrice);
+        this.ramSize = ramSize;
+    }
+
+    // Getter
+    public int getRamSize() {
+        return ramSize;
+    }
+
+    // Ghi đè phương thức tính chi phí bảo hành: basePrice * 0.07
+    @Override
+    public double calculateWarrantyCost() {
+        return basePrice * 0.07;
+    }
+
+    // Ghi đè phương thức lấy thông tin chi tiết
+    @Override
+    public String getDetails(DecimalFormat df) {
+        return "Laptop - Giá gốc: " + df.format(basePrice) + 
+               ", Dung lượng RAM: " + ramSize + " GB";
+    }
+}
+
+// Lớp Smartphone
+class Smartphone extends ElectronicDevice {
+    private double screenSize; // Kích thước màn hình (inch)
+
+    // Constructor
+    public Smartphone(double basePrice, double screenSize) {
+        super(basePrice);
+        this.screenSize = screenSize;
+    }
+
+    // Getter
+    public double getScreenSize() {
+        return screenSize;
+    }
+
+    // Ghi đè phương thức tính chi phí bảo hành: basePrice * 0.05 + screenSize * 50
+    @Override
+    public double calculateWarrantyCost() {
+        return basePrice * 0.05 + screenSize * 50;
+    }
+
+    // Ghi đè phương thức lấy thông tin chi tiết
+    @Override
+    public String getDetails(DecimalFormat df) {
+        return "Smartphone - Giá gốc: " + df.format(basePrice) + 
+               ", Kích thước màn hình: " + df.format(screenSize) + " inch";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Đọc số lượng test case
+        int numTestCases = scanner.nextInt();
+        scanner.nextLine(); // Đọc bỏ dòng còn lại
+
+        ArrayList<ElectronicDevice> devices = new ArrayList<>();
+        double totalWarrantyCost = 0.0;
+        
+        // Định dạng đầu ra (2 chữ số thập phân)
+        DecimalFormat df = new DecimalFormat("0.00");
+
+        for (int i = 0; i < numTestCases; i++) {
+            String line = scanner.nextLine();
+            String[] parts = line.split(" ");
+            
+            String type = parts[0];
+            double basePrice = Double.parseDouble(parts[1]);
+            double auxValue = Double.parseDouble(parts[2]); // ramSize hoặc screenSize
+
+            ElectronicDevice device = null;
+
+            if (type.equals("Laptop")) {
+                int ramSize = (int) auxValue;
+                device = new Laptop(basePrice, ramSize);
+            } else if (type.equals("Smartphone")) {
+                double screenSize = auxValue;
+                device = new Smartphone(basePrice, screenSize);
+            }
+
+            if (device != null) {
+                devices.add(device);
+                totalWarrantyCost += device.calculateWarrantyCost();
+            }
+        }
+        
+        // --- In kết quả ---
+        System.out.println("Danh sách thiết bị và chi phí bảo hành:");
+        
+        for (ElectronicDevice d : devices) {
+            double cost = d.calculateWarrantyCost();
+            
+            // In chi tiết: Loại thiết bị - Giá gốc: basePrice, Chi phí bảo hành: chi phí
+            System.out.println(d.getDetails(df) + ", Chi phí bảo hành: " + df.format(cost));
+        }
+
+        // In tổng chi phí bảo hành
+        System.out.println("Tổng chi phí bảo hành: " + df.format(totalWarrantyCost));
+        
+        scanner.close();
+    }
+}
