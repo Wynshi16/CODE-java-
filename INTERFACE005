@@ -1,0 +1,99 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+interface Identifiable {
+    String getId();
+}
+
+interface Birthable {
+    String getBirthDate();
+}
+
+class Citizen implements Identifiable, Birthable {
+    private String name;
+    private int age;
+    private String id;
+    private String birthDate;
+
+    public Citizen(String name, int age, String id, String birthDate) {
+        this.name = name;
+        this.age = age;
+        this.id = id;
+        this.birthDate = birthDate;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+}
+
+class Pet implements Birthable {
+    private String name;
+    private String birthDate;
+
+    public Pet(String name, String birthDate) {
+        this.name = name;
+        this.birthDate = birthDate;
+    }
+
+    @Override
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int testCases = Integer.parseInt(sc.nextLine());
+        List<Birthable> birthables = new ArrayList<>();
+
+        while (true) {
+            String line = sc.nextLine();
+            if (line.equals("End")) {
+                break;
+            }
+
+            String[] tokens = line.split(" ");
+            if (tokens[0].equals("Citizen")) {
+                String name = tokens[1];
+                int age = Integer.parseInt(tokens[2]);
+                String id = tokens[3];
+                String birthDate = tokens[4];
+                birthables.add(new Citizen(name, age, id, birthDate));
+            } else if (tokens[0].equals("Pet")) {
+                String name = tokens[1];
+                String birthDate = tokens[2];
+                birthables.add(new Pet(name, birthDate));
+            }
+        }
+
+        String yearToCheck = sc.nextLine().trim();
+
+        for (Birthable b : birthables) {
+            String birthDate = b.getBirthDate();
+            if (birthDate.endsWith(yearToCheck)) {
+                System.out.println(birthDate);
+            }
+        }
+    }
+}
