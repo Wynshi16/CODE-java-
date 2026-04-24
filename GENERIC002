@@ -1,0 +1,66 @@
+import java.util.Scanner;
+
+public class Main {
+
+    /**
+     * Hàm generic tìm chỉ số đầu tiên của một giá trị trong mảng.
+     *
+     * @param <T> Kiểu dữ liệu của mảng và giá trị cần tìm.
+     * @param array Mảng cần kiểm tra.
+     * @param value Giá trị cần tìm.
+     * @return Chỉ số đầu tiên khớp, hoặc -1 nếu không tìm thấy.
+     */
+    public static <T> int findFirstIndex(T[] array, T value) {
+        // Lặp qua từng phần tử trong mảng
+        for (int i = 0; i < array.length; i++) {
+            // Sử dụng equals() để so sánh giá trị một cách an toàn
+            if (array[i].equals(value)) {
+                return i; // Trả về chỉ số đầu tiên khớp
+            }
+        }
+        return -1; // Trả về -1 nếu không tìm thấy phần tử
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Đọc số lượng test case
+        int numTestCases = Integer.parseInt(scanner.nextLine());
+        
+        for (int i = 0; i < numTestCases; i++) {
+            if (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                
+                // Tách dãy và giá trị cần tìm bằng dấu |
+                String[] parts = line.split("\\|");
+                
+                if (parts.length == 2) {
+                    // Mảng các chuỗi (dãy cần kiểm tra)
+                    String arrayPart = parts[0].trim();
+                    // Giá trị cần tìm
+                    String valuePart = parts[1].trim();
+                    
+                    // Chuyển dãy thành mảng String
+                    String[] array = arrayPart.split(" ");
+                    
+                    // Xử lý trường hợp mảng rỗng hoặc chỉ có khoảng trắng (ví dụ: " | value")
+                    if (array.length == 1 && array[0].isEmpty()) {
+                         System.out.println("-1");
+                         continue;
+                    }
+                    
+                    // Gọi hàm generic (T ở đây là String)
+                    int index = findFirstIndex(array, valuePart);
+                    
+                    // In kết quả
+                    System.out.println(index);
+                } else {
+                    // Trường hợp input không đúng định dạng (không có dấu |)
+                    System.out.println("-1"); 
+                }
+            }
+        }
+        
+        scanner.close();
+    }
+}
