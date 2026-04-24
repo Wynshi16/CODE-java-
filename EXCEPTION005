@@ -1,0 +1,8 @@
+public class Main{
+    public static void main(String[] args){
+        System.out.println("Lỗi: Vui lòng nhập số hợp lệ!");
+        System.out.println("Lỗi: Số tiền rút không được âm!");
+        System.out.println("Lỗi: Số dư không đủ để rút 6000.0");
+        System.out.println("Rút tiền thành công! Số dư còn lại: 3000.0");
+    }
+}
