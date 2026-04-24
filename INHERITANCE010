@@ -1,0 +1,151 @@
+import java.util.ArrayList;
+import java.util.List;
+
+abstract class Product {
+    protected String name;
+    protected double price;
+    protected int quantity;
+
+    public Product(String name, double price, int quantity) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public abstract double calculateCost(int quantity);
+
+    public abstract void displayDetails();
+
+    public String getName() {
+        return name;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void reduceQuantity(int amount) {
+        this.quantity -= amount;
+    }
+}
+
+class Book extends Product {
+    private String author;
+
+    public Book(String name, double price, int quantity, String author) {
+        super(name, price, quantity);
+        this.author = author;
+    }
+
+    @Override
+    public double calculateCost(int quantity) {
+        return price * quantity;
+    }
+
+    @Override
+    public void displayDetails() {
+        System.out.println("Name: " + name);
+        System.out.println("Price: $" + price);
+        System.out.println("Available Quantity: " + quantity);
+        System.out.println("Author: " + author);
+    }
+}
+
+class Electronics extends Product {
+    private String brand;
+
+    public Electronics(String name, double price, int quantity, String brand) {
+        super(name, price, quantity);
+        this.brand = brand;
+    }
+
+    @Override
+    public double calculateCost(int quantity) {
+        return price * quantity * 1.1;
+    }
+
+    @Override
+    public void displayDetails() {
+        System.out.println("Name: " + name);
+        System.out.println("Price: $" + price);
+        System.out.println("Available Quantity: " + quantity);
+        System.out.println("Brand: " + brand);
+    }
+}
+
+class User {
+    private String username;
+    private double totalSpent;
+
+    public User(String username) {
+        this.username = username;
+        this.totalSpent = 0;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public double getTotalSpent() {
+        return totalSpent;
+    }
+
+    public void buyProduct(Product product, int amount) {
+        if (amount <= product.getQuantity()) {
+            double cost = product.calculateCost(amount);
+            product.reduceQuantity(amount);
+            totalSpent += cost;
+            System.out.printf("User: %s bought %d %s for $%.1f%n", username, amount, product.getName(), cost);
+        } else {
+            System.out.printf("Insufficient quantity of %s available.%n", product.getName());
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Sản phẩm
+        Electronics laptop = new Electronics("laptop", 20, 10, "Dell");
+        Book harryPotter = new Book("Harry Potter", 10, 12, "camnh");
+
+        // Người dùng
+        User user1 = new User("Alice");
+        User user2 = new User("Bob");
+        User user3 = new User("Charlie");
+
+        // Nhiệm vụ mua hàng
+        user1.buyProduct(laptop, 3);
+        user1.buyProduct(harryPotter, 10);
+        user2.buyProduct(laptop, 1);
+        user3.buyProduct(harryPotter, 5);
+        System.out.println("====");
+
+        // Sắp xếp người dùng theo tổng chi tiêu giảm dần (không dùng sort)
+        List<User> users = new ArrayList<>();
+        users.add(user1);
+        users.add(user2);
+        users.add(user3);
+
+        for (int i = 0; i < users.size() - 1; i++) {
+            for (int j = i + 1; j < users.size(); j++) {
+                if (users.get(i).getTotalSpent() < users.get(j).getTotalSpent()) {
+                    User temp = users.get(i);
+                    users.set(i, users.get(j));
+                    users.set(j, temp);
+                }
+            }
+        }
+
+        // In ra tổng chi tiêu
+        System.out.println("Users with Highest Total Spent:");
+        for (int i = 0; i < users.size(); i++) {
+            System.out.printf("%d. %s: $%.1f%n", i + 1, users.get(i).getUsername(), users.get(i).getTotalSpent());
+        }
+        System.out.println("====");
+
+        // In thông tin sản phẩm còn lại
+        laptop.displayDetails();
+        System.out.println("---");
+        harryPotter.displayDetails();
+    }
+}
