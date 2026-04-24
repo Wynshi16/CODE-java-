@@ -1,0 +1,88 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+// (0) Interface Moveable
+interface Moveable {
+    void move(int dx, int dy);
+}
+
+// (1) Class Organism implements Moveable
+class Organism implements Moveable {
+    private int x;
+    private int y;
+
+    public Organism(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    // Di chuyển (thay đổi tọa độ)
+    @Override
+    public void move(int dx, int dy) {
+        this.x += dx;
+        this.y += dy;
+    }
+
+    // In ra tọa độ
+    @Override
+    public String toString() {
+        return "x:" + x + ";y:" + y;
+    }
+}
+
+// (2) Class Herd implements Moveable
+class Herd implements Moveable {
+    private ArrayList<Moveable> members;
+
+    public Herd() {
+        members = new ArrayList<>();
+    }
+
+    // Thêm 1 Organism vào Herd
+    public void addToHerd(Moveable moveable) {
+        members.add(moveable);
+    }
+
+    // Di chuyển toàn bộ Herd
+    @Override
+    public void move(int dx, int dy) {
+        for (Moveable m : members) {
+            m.move(dx, dy);
+        }
+    }
+
+    // Hiển thị tất cả các Organism trong Herd
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Moveable m : members) {
+            sb.append(m.toString()).append("\n");
+        }
+        return sb.toString();
+    }
+}
+
+// (3) Main class
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = Integer.parseInt(sc.nextLine()); // số lượng test case
+        Herd herd = new Herd();
+
+        // Nhập tọa độ và thêm vào herd
+        for (int i = 0; i < n; i++) {
+            int x = sc.nextInt();
+            int y = sc.nextInt();
+            herd.addToHerd(new Organism(x, y));
+        }
+
+        // Di chuyển tất cả Organism trong herd (dx=1, dy=1)
+        herd.move(1, 1);
+
+        // In kết quả
+        System.out.print(herd.toString());
+
+        sc.close();
+    }
+}
