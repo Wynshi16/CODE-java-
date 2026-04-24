@@ -1,0 +1,73 @@
+import java.util.Scanner;
+
+// (1) Abstract class Shape
+abstract class Shape {
+    // Abstract method
+    public abstract double calculateArea();
+
+    // Display method
+    public void displayInfo() {
+        System.out.printf("Shape:%s|Area:%.2f%n", this.getClass().getSimpleName(), calculateArea());
+    }
+}
+
+// (2) Rectangle class kế thừa Shape
+class Rectangle extends Shape {
+    private double width;
+    private double length;
+
+    public Rectangle(double width, double length) {
+        this.width = width;
+        this.length = length;
+    }
+
+    @Override
+    public double calculateArea() {
+        return width * length;
+    }
+}
+
+// (3) Circle class kế thừa Shape
+class Circle extends Shape {
+    private double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public double calculateArea() {
+        return Math.PI * radius * radius;
+    }
+}
+
+// (4) Main class
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = Integer.parseInt(sc.nextLine().trim()); // số test case
+
+        for (int i = 0; i < t; i++) {
+            String[] parts = sc.nextLine().split(" ");
+            String shapeType = parts[0];
+
+            Shape shape;
+
+            if (shapeType.equalsIgnoreCase("Rectangle")) {
+                double width = Double.parseDouble(parts[1]);
+                double length = Double.parseDouble(parts[2]);
+                shape = new Rectangle(width, length);
+            } else if (shapeType.equalsIgnoreCase("Circle")) {
+                double radius = Double.parseDouble(parts[1]);
+                shape = new Circle(radius);
+            } else {
+                continue; // bỏ qua nếu không hợp lệ
+            }
+
+            // Hiển thị thông tin hình
+            shape.displayInfo();
+        }
+
+        sc.close();
+    }
+}
