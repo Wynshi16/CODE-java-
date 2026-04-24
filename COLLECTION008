@@ -1,0 +1,215 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+// Lớp cơ sở trừu tượng cho các thiết bị
+abstract class Equipment {
+    protected String name;
+    protected int durability;
+
+    public Equipment(String name, int durability) {
+        this.name = name;
+        this.durability = durability;
+    }
+
+    public abstract String getElement(); 
+
+    public void decreaseDurability(int amount) {
+        this.durability -= amount;
+        if (this.durability < 0) {
+            this.durability = 0;
+        }
+    }
+
+    public boolean isBroken() {
+        return this.durability <= 0;
+    }
+}
+
+class Tool extends Equipment {
+    public Tool(String name, int durability) {
+        super(name, durability);
+    }
+    @Override
+    public String getElement() {
+        return "Tool";
+    }
+}
+
+class Food extends Equipment {
+    public Food(String name, int durability) {
+        super(name, durability);
+    }
+    @Override
+    public String getElement() {
+        return "Food";
+    }
+}
+
+class Medicine extends Equipment {
+    public Medicine(String name, int durability) {
+        super(name, durability);
+    }
+    @Override
+    public String getElement() {
+        return "Medicine";
+    }
+}
+
+class Astronaut {
+    private String name;
+    private int missionPoints;
+    private List<Equipment> inventory; 
+
+    public Astronaut(String name) {
+        this.name = name;
+        this.missionPoints = 0;
+        this.inventory = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getMissionPoints() {
+        return missionPoints;
+    }
+
+    public void addEquipment(Equipment eq) {
+        this.inventory.add(eq);
+    }
+
+    public void handleMission(String missionType) {
+        String requiredType;
+        switch (missionType) {
+            case "Repair":
+                requiredType = "Tool";
+                break;
+            case "Nutrition":
+                requiredType = "Food";
+                break;
+            case "Heal":
+                requiredType = "Medicine";
+                break;
+            default:
+                return;
+        }
+
+        boolean hasRequiredEquipment = false;
+        for (Equipment eq : inventory) {
+            if (eq.getElement().equals(requiredType)) {
+                hasRequiredEquipment = true;
+                break;
+            }
+        }
+
+        if (hasRequiredEquipment) {
+            this.missionPoints += 1;
+        } else {
+            // Giảm độ bền 15 đơn vị cho TẤT CẢ thiết bị
+            for (Equipment eq : inventory) {
+                eq.decreaseDurability(15);
+            }
+        }
+
+        // Loại bỏ thiết bị hỏng
+        this.inventory.removeIf(Equipment::isBroken);
+    }
+
+    public int getNumberOfEquipmentLeft() {
+        return this.inventory.size();
+    }
+
+    @Override
+    public String toString() {
+        return name + " " + missionPoints + " " + getNumberOfEquipmentLeft();
+    }
+}
+
+public class Main {
+
+    private static Equipment createEquipment(String type, String name, int durability) {
+        switch (type) {
+            case "Tool":
+                return new Tool(name, durability);
+            case "Food":
+                return new Food(name, durability);
+            case "Medicine":
+                return new Medicine(name, durability);
+            default:
+                return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        // LinkedHashMap giữ nguyên thứ tự chèn (thứ tự xuất hiện ban đầu)
+        Map<String, Astronaut> astronautsMap = new LinkedHashMap<>();
+
+        // --- Giai đoạn 1: Thu thập Thiết bị (trước Launch) ---
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty()) continue;
+
+            if (line.equals("Launch")) {
+                break;
+            }
+
+            try {
+                String[] parts = line.split(" ");
+                if (parts.length != 4) continue;
+
+                String astronautName = parts[0];
+                String equipmentType = parts[1];
+                String equipmentName = parts[2];
+                int durability = Integer.parseInt(parts[3]);
+
+                astronautsMap.putIfAbsent(astronautName, new Astronaut(astronautName));
+                Astronaut currentAstronaut = astronautsMap.get(astronautName);
+
+                Equipment equipment = createEquipment(equipmentType, equipmentName, durability);
+                if (equipment != null) {
+                    currentAstronaut.addEquipment(equipment);
+                }
+
+            } catch (NumberFormatException e) {
+                // Bỏ qua dòng nếu durability không phải là số
+            }
+        }
+
+        // --- Giai đoạn 2: Xử lý Nhiệm vụ (sau Launch) ---
+        while (scanner.hasNextLine()) {
+            String mission = scanner.nextLine().trim();
+            if (mission.isEmpty()) continue;
+
+            if (mission.equals("Return")) {
+                break;
+            }
+
+            // Xử lý nhiệm vụ cho TẤT CẢ phi hành gia
+            for (Astronaut astronaut : astronautsMap.values()) {
+                astronaut.handleMission(mission);
+            }
+        }
+        
+        // --- Giai đoạn 3: In Kết quả (sau Return) ---
+        
+        List<Astronaut> resultList = new ArrayList<>(astronautsMap.values());
+
+        // Sắp xếp: Giảm dần missionPoints. 
+        // Việc sử dụng List được tạo từ LinkedHashMap và sử dụng stable sort 
+        // (mà Java Collections.sort() là) đảm bảo giữ nguyên thứ tự ban đầu khi bằng điểm.
+        
+        resultList.sort(Comparator.comparingInt(Astronaut::getMissionPoints).reversed());
+
+        // In kết quả
+        for (Astronaut astronaut : resultList) {
+            System.out.println(astronaut.toString());
+        }
+
+        scanner.close();
+    }
+}
