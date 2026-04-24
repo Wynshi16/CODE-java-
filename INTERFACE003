@@ -1,0 +1,53 @@
+interface TacoBox {
+    int tacoRemaining();
+    void eat();
+}
+
+class TripleTacoBox implements TacoBox {
+    private int tacos;
+
+    public TripleTacoBox() {
+        this.tacos = 3;
+    }
+
+    public int tacoRemaining() {
+        return tacos;
+    }
+
+    public void eat() {
+        if (tacos > 0) {
+            tacos--;
+        }
+    }
+}
+
+class CustomTacoBox implements TacoBox {
+    private int tacos;
+
+    public CustomTacoBox(int tacos) {
+        this.tacos = tacos;
+    }
+
+    public int tacoRemaining() {
+        return tacos;
+    }
+
+    public void eat() {
+        if (tacos > 0) {
+            tacos--;
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        TripleTacoBox tripleBox = new TripleTacoBox();
+        tripleBox.eat();
+        tripleBox.eat();
+        System.out.println("Triple taco boxes left: " + tripleBox.tacoRemaining());
+
+        CustomTacoBox customBox = new CustomTacoBox(8);
+        customBox.eat();
+        System.out.println("Custom taco boxes left: " + customBox.tacoRemaining());
+    }
+}
