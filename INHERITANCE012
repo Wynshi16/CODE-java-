@@ -1,0 +1,184 @@
+import java.util.Scanner;
+
+// Lớp cha: Employee (Nhân viên)
+class Employee {
+    protected String name;
+    protected double salary; // Lương cơ bản
+
+    // Constructor
+    public Employee(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    // Getter/Setter
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    // Trả về thông tin cơ bản của nhân viên
+    public String getInfo() {
+        return "Họ tên: " + name;
+    }
+
+    // Trả về lương thực nhận (mặc định = lương cơ bản)
+    public double calculateSalary() {
+        return salary;
+    }
+}
+
+// Lớp con 1: FullTimeEmployee (Nhân viên chính thức)
+class FullTimeEmployee extends Employee {
+    private double bonus;
+
+    // Constructor
+    public FullTimeEmployee(String name, double salary, double bonus) {
+        super(name, salary);
+        this.bonus = bonus;
+    }
+
+    // Getter/Setter bổ sung
+    public double getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(double bonus) {
+        this.bonus = bonus;
+    }
+
+    // Ghi đè phương thức calculateSalary(): lương cơ bản + thưởng
+    @Override
+    public double calculateSalary() {
+        return salary + bonus;
+    }
+}
+
+// Lớp con 2: PartTimeEmployee (Nhân viên thời vụ)
+class PartTimeEmployee extends Employee {
+    private int hoursWorked;
+    private double hourlyRate;
+
+    // Constructor
+    public PartTimeEmployee(String name, int hoursWorked, double hourlyRate) {
+        super(name, 0); // Lương cơ bản không áp dụng, đặt là 0 hoặc giá trị mặc định
+        this.hoursWorked = hoursWorked;
+        this.hourlyRate = hourlyRate;
+    }
+
+    // Getter/Setter bổ sung
+    public int getHoursWorked() {
+        return hoursWorked;
+    }
+
+    public void setHoursWorked(int hoursWorked) {
+        this.hoursWorked = hoursWorked;
+    }
+
+    public double getHourlyRate() {
+        return hourlyRate;
+    }
+
+    public void setHourlyRate(double hourlyRate) {
+        this.hourlyRate = hourlyRate;
+    }
+
+    // Ghi đè phương thức calculateSalary(): hoursWorked * hourlyRate
+    @Override
+    public double calculateSalary() {
+        return hoursWorked * hourlyRate;
+    }
+}
+
+// Lớp Main để thực thi chương trình
+public class Main {
+    
+    // Phương thức in thông tin của nhân viên (FullTime)
+    public static void printEmployeeInfo(FullTimeEmployee emp) {
+        System.out.println("Loại: FullTime");
+        System.out.println("Họ tên: " + emp.getName());
+        System.out.printf("Lương cơ bản: %.1f%n", emp.getSalary());
+        System.out.printf("Thưởng: %.1f%n", emp.getBonus());
+        System.out.printf("=> Lương thực nhận: %.1f%n", emp.calculateSalary());
+    }
+
+    // Phương thức in thông tin của nhân viên (PartTime)
+    public static void printEmployeeInfo(PartTimeEmployee emp) {
+        System.out.println("Loại: PartTime");
+        System.out.println("Họ tên: " + emp.getName());
+        System.out.printf("Số giờ làm việc: %d giờ%n", emp.getHoursWorked());
+        System.out.printf("Tiền công mỗi giờ: %.1f%n", emp.getHourlyRate());
+        System.out.printf("=> Lương thực nhận: %.1f%n", emp.calculateSalary());
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Employee employee1 = null;
+        Employee employee2 = null;
+
+        // --- Đọc thông tin nhân viên 1 ---
+        String type1 = scanner.nextLine();
+        String name1 = scanner.nextLine();
+
+        if (type1.equals("FullTime")) {
+            double salary = scanner.nextDouble();
+            double bonus = scanner.nextDouble();
+            scanner.nextLine(); // Đọc bỏ dòng còn lại
+            employee1 = new FullTimeEmployee(name1, salary, bonus);
+        } else if (type1.equals("PartTime")) {
+            int hoursWorked = scanner.nextInt();
+            double hourlyRate = scanner.nextDouble();
+            scanner.nextLine(); // Đọc bỏ dòng còn lại
+            employee1 = new PartTimeEmployee(name1, hoursWorked, hourlyRate);
+        }
+
+        // --- Đọc thông tin nhân viên 2 ---
+        String type2 = scanner.nextLine();
+        String name2 = scanner.nextLine();
+
+        if (type2.equals("FullTime")) {
+            double salary = scanner.nextDouble();
+            double bonus = scanner.nextDouble();
+            // Không cần scanner.nextLine() ở đây vì không còn input
+            employee2 = new FullTimeEmployee(name2, salary, bonus);
+        } else if (type2.equals("PartTime")) {
+            int hoursWorked = scanner.nextInt();
+            double hourlyRate = scanner.nextDouble();
+            // Không cần scanner.nextLine() ở đây vì không còn input
+            employee2 = new PartTimeEmployee(name2, hoursWorked, hourlyRate);
+        }
+        
+        // --- In kết quả ---
+        System.out.println("--- Thông tin nhân viên ---");
+
+        // In thông tin nhân viên 1
+        if (employee1 instanceof FullTimeEmployee) {
+            printEmployeeInfo((FullTimeEmployee) employee1);
+        } else if (employee1 instanceof PartTimeEmployee) {
+            printEmployeeInfo((PartTimeEmployee) employee1);
+        }
+
+        // Dấu Enter ngăn cách
+        System.out.println(); 
+
+        // In thông tin nhân viên 2
+        if (employee2 instanceof FullTimeEmployee) {
+            printEmployeeInfo((FullTimeEmployee) employee2);
+        } else if (employee2 instanceof PartTimeEmployee) {
+            printEmployeeInfo((PartTimeEmployee) employee2);
+        }
+
+        scanner.close();
+    }
+}
