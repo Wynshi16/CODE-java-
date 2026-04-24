@@ -1,0 +1,124 @@
+import java.util.*;
+
+class Item {
+    private String product;
+    private int quantity;
+    private int unitPrice;
+
+    public Item(String product, int quantity, int unitPrice) {
+        this.product = product;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public int getUnitPrice() {
+        return unitPrice;
+    }
+
+    public int getTotalPrice() {
+        return quantity * unitPrice;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void printInfo() {
+        System.out.println("Product: " + product + " has quantity " + quantity + " with price: " + getTotalPrice());
+    }
+}
+
+class Warehouse {
+    private List<Item> items;
+
+    public Warehouse() {
+        items = new ArrayList<>();
+    }
+
+    public void importProduct(Item item) {
+        for (Item i : items) {
+            if (i.getProduct().equals(item.getProduct())) {
+                i.setQuantity(i.getQuantity() + item.getQuantity());
+                return;
+            }
+        }
+        items.add(item);
+    }
+
+    public void removeProduct(String product, int quantity) {
+        for (Item i : items) {
+            if (i.getProduct().equals(product)) {
+                i.setQuantity(i.getQuantity() - quantity);
+                return;
+            }
+        }
+    }
+
+    public void decreaseQuantityInWarehouseByOne() {
+        for (Item i : items) {
+            i.setQuantity(i.getQuantity() - 1);
+        }
+    }
+
+    public void takeFromItemToWarehouse(List<Item> itemsToCheck, String product, int quantity) {
+        for (Item check : itemsToCheck) {
+            if (check.getProduct().equals(product)) {
+                for (Item i : items) {
+                    if (i.getProduct().equals(product)) {
+                        int addQty = Math.min(quantity, check.getQuantity());
+                        i.setQuantity(i.getQuantity() + addQty);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public void printAll() {
+        for (Item i : items) {
+            i.printInfo();
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // (1)
+        Item milk = new Item("milk", 4, 2);
+        Item buttermilk = new Item("buttermilk", 10, 2);
+        milk.printInfo();
+        buttermilk.printInfo();
+
+        // (2)
+        Warehouse warehouse = new Warehouse();
+        warehouse.importProduct(milk);
+        warehouse.importProduct(buttermilk);
+
+        // (3)
+        warehouse.removeProduct("milk", 1);
+        warehouse.removeProduct("buttermilk", 3);
+        warehouse.printAll();
+
+        // (4)
+        warehouse.decreaseQuantityInWarehouseByOne();
+        warehouse.printAll();
+
+        // (5)
+        List<Item> itemsToCheck = new ArrayList<>();
+        itemsToCheck.add(new Item("milk", 2, 2));
+        itemsToCheck.add(new Item("buttermilk", 6, 2));
+
+        warehouse.takeFromItemToWarehouse(itemsToCheck, "milk", 5);
+        warehouse.takeFromItemToWarehouse(itemsToCheck, "buttermilk", 1);
+
+        warehouse.printAll();
+    }
+}
