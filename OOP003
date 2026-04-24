@@ -1,0 +1,70 @@
+import java.util.Scanner;
+
+class Musician {
+    private String name;
+    private String nationality;
+    private String style;
+
+
+public Musician(String name, String nationality, String style) throws IllegalArgumentException{
+    this.name =name;
+
+    if(!nationality.equals( "VN") && !nationality.equals( "INT")){
+        throw new IllegalArgumentException( "Invalid nationality. Only 'VN' or 'INT' allowed.");
+    
+    }
+    this.nationality = nationality;
+    this.style = style;
+}
+
+@Override
+public String toString(){
+    return "Musician[name=" + name + ", nationality=" + nationality + ", style=" + style + "]";
+}
+}
+
+class Song {
+    private String title;
+    private String genre;
+    private int year;
+    private Musician musician;
+
+    public Song(String title, String genre, int year, Musician musician){
+        this.title =title;
+        this.genre=genre;
+        this.year=year;
+        this.musician=musician;
+    }
+
+    @Override
+    public String toString(){
+        return"Song[title=" + title + ", genre=" + genre + ", year=" + year + ", " +musician.toString() + "]";
+    }
+}
+
+public class Main {
+    public static void main(String[] args){
+        Scanner scanner =new Scanner(System.in);
+        try{
+            String musicianName =scanner.nextLine();
+            String musicianNationality = scanner.nextLine();
+            String musicianStyle = scanner.nextLine();
+
+            String songTitle = scanner.nextLine();
+            String songGenre = scanner.nextLine();
+            int songYear = Integer.parseInt(scanner.nextLine());
+
+            Musician musician = new Musician(musicianName, musicianNationality, musicianStyle);
+
+            Song song = new Song(songTitle, songGenre, songYear, musician);
+
+            System.out.println(song.toString());
+        }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
+        }catch (Exception e){
+
+        }finally{
+            scanner.close();
+        }
+    } 
+}
