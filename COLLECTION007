@@ -1,0 +1,111 @@
+import java.util.*;
+
+class Pokemon {
+    private String name;
+    private String element;
+    private int health;
+
+    public Pokemon(String name, String element, int health) {
+        this.name = name;
+        this.element = element;
+        this.health = health;
+    }
+
+    public String getElement() {
+        return element;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void reduceHealth(int amount) {
+        this.health -= amount;
+    }
+}
+
+class Trainer {
+    private String name;
+    private int numberOfBadges;
+    private List<Pokemon> pokemons;
+
+    public Trainer(String name) {
+        this.name = name;
+        this.numberOfBadges = 0;
+        this.pokemons = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getNumberOfBadges() {
+        return numberOfBadges;
+    }
+
+    public List<Pokemon> getPokemons() {
+        return pokemons;
+    }
+
+    public void addPokemon(Pokemon p) {
+        pokemons.add(p);
+    }
+
+    public void incrementBadges() {
+        numberOfBadges++;
+    }
+
+    public void reducePokemonHealth(int amount) {
+        for (Pokemon p : pokemons) {
+            p.reduceHealth(amount);
+        }
+        // Remove dead Pokemon
+        pokemons.removeIf(p -> p.getHealth() <= 0);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Map<String, Trainer> trainersMap = new LinkedHashMap<>();
+
+        // Read trainers and pokemons
+        while (true) {
+            String line = sc.nextLine();
+            if (line.equals("Tournament")) break;
+            String[] parts = line.split("\\s+");
+            String trainerName = parts[0];
+            String pokemonName = parts[1];
+            String element = parts[2];
+            int health = Integer.parseInt(parts[3]);
+
+            trainersMap.putIfAbsent(trainerName, new Trainer(trainerName));
+            trainersMap.get(trainerName).addPokemon(new Pokemon(pokemonName, element, health));
+        }
+
+        // Tournament commands
+        while (true) {
+            String line = sc.nextLine();
+            if (line.equals("End")) break;
+
+            for (Trainer trainer : trainersMap.values()) {
+                boolean hasElement = trainer.getPokemons().stream()
+                        .anyMatch(p -> p.getElement().equals(line));
+                if (hasElement) {
+                    trainer.incrementBadges();
+                } else {
+                    trainer.reducePokemonHealth(10);
+                }
+            }
+        }
+
+        // Sort trainers by badges descending (preserve insertion order for ties)
+        List<Trainer> sortedTrainers = new ArrayList<>(trainersMap.values());
+        sortedTrainers.sort((t1, t2) -> Integer.compare(t2.getNumberOfBadges(), t1.getNumberOfBadges()));
+
+        // Print results
+        for (Trainer trainer : sortedTrainers) {
+            System.out.println(trainer.getName() + " " + trainer.getNumberOfBadges() + " " + trainer.getPokemons().size());
+        }
+    }
+}
