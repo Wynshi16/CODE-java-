@@ -1,0 +1,97 @@
+import java.util.*;
+
+
+class Teacher {
+	private String name;
+	private double baseSalary;
+
+	public Teacher(String name, double baseSalary) {
+		this.name = name;
+		this.baseSalary = baseSalary;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public double getSalary() {
+		return baseSalary;
+	}
+
+	public double calculateSalary() {
+		return baseSalary;
+	}
+}
+
+class PermanentLecturer extends Teacher {
+	private double researchAllowance;
+
+	public PermanentLecturer(String name, double baseSalary, double researchAllowance) {
+		super(name, baseSalary);
+		this.researchAllowance = researchAllowance;
+	}
+	
+	@Override
+	public double calculateSalary() {
+		return getSalary() + researchAllowance ;
+	}
+
+	public void display() {
+		System.out.println("Loại giảng viên: Permanent");
+		System.out.println("Họ tên: " + getName());
+		System.out.println("Lương thực nhận: " + calculateSalary());
+	}
+}
+
+class VisitingLecturer extends Teacher {
+	private int teachingHours;
+	private double paymentPerHour;
+
+	public VisitingLecturer(String name, int teachingHours, double paymentPerHour) {
+		super(name, 0);
+		this.teachingHours = teachingHours;
+		this.paymentPerHour = paymentPerHour;
+	} 
+
+	public double calculateSalary() {
+		return teachingHours  * paymentPerHour ;
+	}
+
+	public void display() {
+		System.out.println("Loại giảng viên: Visiting");
+		System.out.println("Họ tên: " + getName());
+		System.out.println("Lương thực nhận: " + calculateSalary());
+	}
+}
+
+
+public class Main {
+	public static void main(String[] arg){
+		Scanner sc = new Scanner(System.in);
+		System.out.println("--- Thông tin giảng viên ---");
+		
+		for(int i = 0; i < 2; i ++){
+			String type = sc.nextLine();
+			String name = sc.nextLine();
+			
+			if(type.equals("PermanentLecturer")) {
+				double baseSalary = Double.parseDouble(sc.nextLine());
+				double researchAllowance = Double.parseDouble(sc.nextLine());
+				
+				PermanentLecturer P = new PermanentLecturer(name, baseSalary, researchAllowance);
+				P.display();
+			}
+			
+			else if(type.equals("VisitingLecturer")) { 
+				int teachingHours = Integer.parseInt(sc.nextLine());
+				double paymentPerHour = Double.parseDouble(sc.nextLine());
+				
+				VisitingLecturer V = new VisitingLecturer(name, teachingHours, paymentPerHour);
+				V.display();
+			}
+
+		}
+
+	
+	}
+}
