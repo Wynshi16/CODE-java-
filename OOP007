@@ -1,0 +1,54 @@
+import java.util.Scanner;
+
+class Planet {
+    static final double G = 6.67300E-11;
+    // Hằng số Trái Đất cố định
+    static final double EARTH_MASS = 5.976e+24;
+    static final double EARTH_RADIUS = 6.37814e6;
+    
+    private String name;
+    private double mass;
+    private double radius;
+
+    public Planet(String name, double mass, double radius) {
+        this.name = name;
+        this.mass = mass;
+        this.radius = radius;
+    }
+
+    public double surfaceGravity() {
+        return G * mass / (radius * radius);
+    }
+
+    public double surfaceWeight(double otherMass) {
+        return otherMass * surfaceGravity();
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        String name = scanner.nextLine().trim();
+        double mass = Double.parseDouble(scanner.nextLine().trim());
+        double radius = Double.parseDouble(scanner.nextLine().trim());
+        double earthWeight = Double.parseDouble(scanner.nextLine().trim());
+        
+        // Tính g Trái Đất chuẩn từ hằng số cố định
+        double earthGravity = Planet.G * Planet.EARTH_MASS / (Planet.EARTH_RADIUS * Planet.EARTH_RADIUS);
+        
+        // objectMass thực = earthWeight / g_earth
+        double objectMass = earthWeight / earthGravity;
+        
+        Planet planet = new Planet(name, mass, radius);
+        double weight = planet.surfaceWeight(objectMass);
+        
+        System.out.printf("Your weight on %s is %.2f%n", planet.getName(), weight);
+        
+        scanner.close();
+    }
+}
